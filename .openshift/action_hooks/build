@@ -4,8 +4,6 @@
 # before the deploy step.  This script gets executed directly, so it
 # could be python, php, ruby, etc.
 
-#!/bin/bash
-
 REDIS_VERSION=2.4.11
 MAKE_IS_DONE="no"
 
