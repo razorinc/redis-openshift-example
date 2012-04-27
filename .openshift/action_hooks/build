@@ -1,0 +1,59 @@
+#!/bin/bash
+# This is a simple build script and will be executed on your CI system if
+# available.  Otherwise it will execute while your application is stopped
+# before the deploy step.  This script gets executed directly, so it
+# could be python, php, ruby, etc.
+
+#!/bin/bash
+
+REDIS_VERSION=2.4.11
+MAKE_IS_DONE="no"
+
+if [ ! -d ${OPENSHIFT_DATA_DIR}/redis ]; then
+  cd ${OPENSHIFT_TMP_DIR}
+  if [ ! -d redis-${REDIS_VERSION} ]; then
+    curl -L -o redis-${REDIS_VERSION}.tar.gz http://redis.googlecode.com/files/redis-${REDIS_VERSION}.tar.gz
+    tar -xvzf redis-${REDIS_VERSION}.tar.gz
+  fi
+  cd redis-${REDIS_VERSION}
+  echo "Start compiling Redis ${REDIS_VERSION} on Openshift (i'll take a while)"
+  PREFIX=${OPENSHIFT_DATA_DIR}redis make -e install
+
+  mkdir ${OPENSHIFT_DATA_DIR}/redis/data
+  MAKE_IS_DONE="yes"
+fi
+
+if [ "$MAKE_IS_DONE" == "yes" ]; then
+  echo "Make is done, now create the patch"
+  cat <<EOF >${OPENSHIFT_TMP_DIR}redis.conf.patch
+17c17
+< daemonize no
+---
+> daemonize yes
+21,22c21
+< pidfile /var/run/redis.pid
+< 
+---
+> pidfile ${OPENSHIFT_RUN_DIR}redis.pid
+24c24
+< port 6379
+---
+> port 0
+36,37c35,36
+< # unixsocket /tmp/redis.sock
+< # unixsocketperm 755
+---
+> unixsocket ${OPENSHIFT_GEAR_DIR}tmp/redis.sock
+> unixsocketperm 755
+107c106
+< dir ./
+---
+> dir ${OPENSHIFT_DATA_DIR}redis/data
+
+EOF
+  patch ${OPENSHIFT_TMP_DIR}redis-${REDIS_VERSION}/redis.conf ${OPENSHIFT_TMP_DIR}redis.conf.patch -o ${OPENSHIFT_DATA_DIR}redis/bin/redis.conf
+fi
+
+cd ${OPENSHIFT_DATA_DIR}redis
+[ -f ${OPENSHIFT_RUN_DIR}redis.pid ] || ${OPENSHIFT_DATA_DIR}redis/bin/redis-server ${OPENSHIFT_DATA_DIR}redis/bin/redis.conf
+
