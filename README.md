@@ -31,7 +31,16 @@ server. The first deploy takes a bit longer as the necessary libraries and tarba
 downloaded to your OpenShift instance, so grab a cup of coffee and after a
 minute or two test that your application deployed correctly by going to
 
+Remember that Redis is configured to be binded to an unixsocket, obviously you
+can change the behavior modifying the configuration file in
+${OPENSHIFT_DATA_DIR}/redis/redis.conf
+
     http://yourapplication-$yourdomain.rhcloud.com/ruby/
+
+To connect on Redis through unixsocket is quite easy to do
+
+   require 'redis'
+   Redis::new(:path=>"#{ENV['OPENSHIFT_GEAR_DIR']}tmp/redis.sock")
 
 Verify you see a "Hello from Ruby!" page served.
 Congratulations! You're up and running with your application, Redis on
