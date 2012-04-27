@@ -16,7 +16,7 @@ Create a Openshift application (using any application name you want)
 
 (Note: ruby-1.8 is just an example)
 
-Add this upstream polyglot repository
+Add this upstream redis repository
 
     cd your_project
     git remote add redis -m master git://github.com/razorinc/redis-openshift-example.git
