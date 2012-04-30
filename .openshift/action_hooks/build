@@ -6,7 +6,7 @@
 
 #!/bin/bash
 
-REDIS_VERSION=2.4.11
+REDIS_VERSION=2.4.12
 MAKE_IS_DONE="no"
 
 if [ ! -d ${OPENSHIFT_DATA_DIR}/redis ]; then
