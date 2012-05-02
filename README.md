@@ -39,8 +39,8 @@ ${OPENSHIFT_DATA_DIR}/redis/redis.conf
 
 To connect on Redis through unixsocket is quite easy to do
 
-   require 'redis'
-   Redis::new(:path=>"#{ENV['OPENSHIFT_GEAR_DIR']}tmp/redis.sock")
+    require 'redis'
+    Redis::new(:path=>"#{ENV['OPENSHIFT_GEAR_DIR']}tmp/redis.sock")
 
 Verify you see a "Hello from Ruby!" page served.
 Congratulations! You're up and running with your application, Redis on
