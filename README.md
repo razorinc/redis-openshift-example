@@ -18,7 +18,7 @@ Create a Openshift application (using any application name you want)
 
 Add this upstream redis repository
 
-    cd your_project
+    cd yourproject
     git remote add redis -m master git://github.com/razorinc/redis-openshift-example.git
     git pull -s recursive -X theirs redis master
 
